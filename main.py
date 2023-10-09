@@ -85,7 +85,13 @@ def get_weather(province, city):
                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     }
     url = "http://d1.weather.com.cn/dingzhi/{}.html?_={}".format(city_id, t)
-    response = get(url, headers=headers)
+    try:
+        response = get(url, headers=headers,timeout=60)
+    except requests.exceptions.ReadTimeout:
+         fp = open(log_file, 'a')
+         fp.write("Timeout occurred")
+         fp.write('\n')
+         fp.close()
     response.encoding = "utf-8"
     response_data = response.text.split(";")[0].split("=")[-1]
     response_json = eval(response_data)
